@@ -1,20 +1,24 @@
 package com.company;
 
 public class Task {
-∆
+
+    //attributes
     private String taskName;
     private int taskId;
     private int todoID;
 
+    // constructor: standard
     public Task(String taskName, int taskId, int todoID) {
         this.taskName = taskName;
         this.taskId = taskId;
         this.todoID = todoID;
     }
 
+    // constructor: empty
     public Task() {
     }
 
+    // getters/setters
     public String getTaskName() {
         return taskName;
     }
@@ -35,7 +39,7 @@ public class Task {
         return todoID;
     }
 
-
+    // to-string method
     @Override
     public String toString() {
         return "Task{" +
