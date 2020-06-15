@@ -1,9 +1,6 @@
 package com.company;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class TaskDAO {
 
@@ -12,53 +9,71 @@ public class TaskDAO {
 
     public TaskDAO() {
         try {
-            conn = DriverManager.getConnection(CONNECTION_STRING);
-
-            // DELETING ALL CONTENT FROM TABLE "TODO"
-            PreparedStatement ps = conn.prepareStatement("DELETE FROM task");
-            ps.execute();
-
-            //PreparedStatement ps = conn.prepareStatement("delete from contact");
-            //ps.execute();
-
+            openConnection();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
     }
 
-    public void insertTask(String taskName, Integer todoId) throws SQLException {
+    private Connection openConnection() throws SQLException {
+        Connection conn = null;
+        try {
+            conn = DriverManager.getConnection(CONNECTION_STRING);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return conn;
+    }
 
+    public void insertTask(String taskName, Integer todoId) throws SQLException {
+        Connection conn = openConnection();
         PreparedStatement ps = conn.prepareStatement("insert into task(task_name, todo_id) values (?, ?)");
         ps.setString(1, taskName);
         ps.setInt(2, todoId);
         ps.execute();
-        System.out.println("TASK entry successful: " + taskName);
+        System.out.println("Task entry successful: " + taskName);
     }
 
 
     public void deleteTask(String taskName, Integer todoId) throws SQLException {
-
-        PreparedStatement ps = conn.prepareStatement("DELETE FROM task WHERE ?, ?)");
+        Connection conn = openConnection();
+        PreparedStatement ps = conn.prepareStatement("DELETE FROM task WHERE task_name = ? AND todo_id = ?");
         ps.setString(1, taskName);
         ps.setInt(2, todoId);
         ps.execute();
-        System.out.println("TASK entry successful: " + taskName);
+        System.out.println("Task deletion successful: " + taskName);
     }
 
 
     public void updateTask(String oldTaskName, String newTaskName) throws SQLException {
-
-        PreparedStatement ps = conn.prepareStatement("UPDATE task SET task_name = ? WHERE task_name = ?)");
-        ps.setString(1, oldTaskName);
-        ps.setString(2, newTaskName);
+        Connection conn = openConnection();
+        PreparedStatement ps = conn.prepareStatement("UPDATE task SET task_name = ? WHERE task_name = ?");
+        ps.setString(1, newTaskName);
+        ps.setString(2, oldTaskName);
         ps.execute();
-        System.out.println("\nEntry successful - Task name changed from " + oldTaskName + " to " + newTaskName + "\n");
+        System.out.println("\nUpdate successful - Task name changed from -" + oldTaskName + "-" + " to " + "-" + newTaskName + "-\n");
+    }
+
+
+    public Integer countAssociatedTasks(String todoName) throws SQLException {
+        Connection conn = openConnection();
+        PreparedStatement ps = conn.prepareStatement("SELECT count(task.TASK_ID) " +
+                "AS task_count " +
+                "FROM task, todo " +
+                "WHERE task.todo_id = todo.TODO_ID " +
+                "AND todo.TODO_NAME = ?");
+        ps.setString(1, todoName);
+        ResultSet rs = ps.executeQuery();
+        Integer taskCount = null;
+        while (rs.next()) {
+            taskCount = rs.getInt("task_count");
+        }
+        return taskCount;
     }
 
 
     public void closeDBConnection() throws SQLException {
+        Connection conn = openConnection();
         conn.close();
     }
-
-
 }

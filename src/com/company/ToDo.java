@@ -67,10 +67,10 @@ public class ToDo {
 
         System.out.println("Todo: " + todoName);
         System.out.println("- - - - - -");
-
+        int counter = 1;
         for (Task task : taskCollection) {
-            int counter = 1;
-            System.out.println("Task #" + counter + ": " + task.getTaskName());
+
+            System.out.println("-" + counter + ". " + task.getTaskName());
             counter++;
         }
     }
