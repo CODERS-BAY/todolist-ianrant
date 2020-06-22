@@ -8,7 +8,7 @@ public class ToDoDAO {
 
 
     public ToDoDAO() {
-        openConnection();
+        //openConnection();
     }
 
     private Connection openConnection() {

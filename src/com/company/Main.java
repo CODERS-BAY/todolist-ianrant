@@ -10,7 +10,6 @@ public class Main {
     static TaskDAO taskDAO = new TaskDAO();
 
     public static void addTodo(Scanner scanner) throws SQLException {
-
         System.out.println("\nPlease enter the name of the new Todo");
         String todoName = scanner.nextLine();
         toDoDAO.insertToDo(todoName);
